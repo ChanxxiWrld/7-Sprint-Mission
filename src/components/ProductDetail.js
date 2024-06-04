@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import S from './ProductDetail.module.css';
+import Style from './ProductDetail.module.css';
 
 const ProductDetail = ({ onChange }) => {
   const [productName, setProductName] = useState('');
   const [productIntroduction, setProductIntroduction] = useState('');
   const [price, setPrice] = useState('');
-  const [tags, setTags] = useState('');
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
   const [formValid, setFormValid] = useState(false);
 
   useEffect(() => {
@@ -17,17 +18,37 @@ const ProductDetail = ({ onChange }) => {
       productName.trim() !== '' &&
       productIntroduction.trim() !== '' &&
       price.trim() !== '' &&
-      tags.trim() !== '';
+      tagInput.trim() !== '';
 
     setFormValid(isValid);
   }, [productName, productIntroduction, price, tags]);
+
+  // input onChange 함수에 넣을 함수
+  const handleTagsInputChange = e => {
+    setTagInput(e.target.value);
+  };
+
+  // input 에서 enter 누르면 tags 배열에 값 추가하기
+
+  const handleTagsInputKeyPress = e => {
+    if (e.key === 'Enter' && tagInput.trim() !== '') {
+      setTags([...tags, tagInput.trimEnd()]);
+      setTagInput('');
+      e.preventDefault();
+    }
+  };
+
+  // x 버튼 누르면 생성된 tag div 없애기
+  const handleTagDelete = index => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
 
   return (
     <>
       <div>
         <label>상품명</label>
         <input
-          className={S.product_input}
+          className={Style.product_input}
           type="text"
           placeholder="상품명을 입력해주세요"
           value={productName}
@@ -35,9 +56,9 @@ const ProductDetail = ({ onChange }) => {
         />
       </div>
       <div>
-        <label className={S.product_introduce}>상품 소개</label>
+        <label className={Style.product_introduce}>상품 소개</label>
         <textarea
-          className={S.product_textarea}
+          className={Style.product_textarea}
           placeholder="상품 소개를 입력해주세요"
           value={productIntroduction}
           onChange={e => setProductIntroduction(e.target.value)}
@@ -47,7 +68,7 @@ const ProductDetail = ({ onChange }) => {
       <div>
         <label>판매가격</label>
         <input
-          className={S.product_input}
+          className={Style.product_input}
           type="text"
           placeholder="판매 가격을 입력해주세요"
           value={price}
@@ -57,12 +78,32 @@ const ProductDetail = ({ onChange }) => {
       <div>
         <label>태그</label>
         <input
-          className={S.product_input}
+          className={Style.product_input}
           type="text"
           placeholder="태그를 입력해주세요"
-          value={tags}
-          onChange={e => setTags(e.target.value)}
+          value={tagInput}
+          onChange={e => setTagInput(e.target.value)}
+          onKeyDown={e => handleTagsInputKeyPress(e)}
         />
+      </div>
+      <div className={Style.tagDiv}>
+        {tags.map((tag, index) => {
+          console.log(tag, index);
+          return (
+            <div
+              key={index}
+              className={Style.tag}
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => handleTagDelete(index)}
+              >
+                x
+              </button>
+            </div>
+          );
+        })}
       </div>
     </>
   );

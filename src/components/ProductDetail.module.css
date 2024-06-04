@@ -30,3 +30,9 @@ label {
   resize: none;
   padding-top: 1.6rem;
 }
+
+.tagDiv {
+  margin-top: 10rem;
+  width: 10rem;
+  height: 10rem;
+}
